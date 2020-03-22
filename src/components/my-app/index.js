@@ -4,7 +4,7 @@ import ShowRandom from '../show-random'
 
 export default class MyApp extends HTMLElement {
   constructor() {
-
+ 
     // We are not even going to touch this.
     super();
     this.showSection = 1;
