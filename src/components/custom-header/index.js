@@ -3,7 +3,7 @@ export default class CustomHeader extends HTMLElement{
         super();
         this.shadowObj = this.attachShadow({mode: 'open'});
         this.render();
-    }
+    } 
 
     render(){
         this.shadowObj.innerHTML = this.getTemplate();
