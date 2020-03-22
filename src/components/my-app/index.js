@@ -1,6 +1,7 @@
 import SearchContainer from '../search-container'
 import ShowTrending from '../show-trending'
 import ShowRandom from '../show-random'
+import CustomHeader from '../custom-header'
 
 export default class MyApp extends HTMLElement {
   constructor() {
@@ -11,6 +12,7 @@ export default class MyApp extends HTMLElement {
     // lets create our shadow root
     this.shadowObj = this.attachShadow({mode: 'open'});
     this.registerOtherComponents();
+    this.handleURL();
     this.render();
   }
   registerOtherComponents(){
@@ -20,14 +22,28 @@ export default class MyApp extends HTMLElement {
     }
     if (typeof customElements.get('show-random') === 'undefined') {      customElements.define('show-random', ShowRandom);
     }
+    if (typeof customElements.get('custom-header') === 'undefined') {      customElements.define('custom-header', CustomHeader);
+    }
 }
 
   render() {
     this.shadowObj.innerHTML = this.getTemplate();
   }
 
+  connectedCallback(){
+    this.shadowObj.querySelector('custom-header')
+    .addEventListener('custom-header-clicked', (e) => {
+      let newShownSection = e.detail.data;
+      if(newShownSection !== this.showSection){
+        this.showSection = newShownSection;
+        this.reRenderAppSection();
+      }
+    })
+  }
+
   getTemplate() {
     return `
+      <custom-header></custom-header>
       <div class="app-section">
       ${this.getSection(this.showSection)}
       </div>
@@ -61,4 +77,28 @@ export default class MyApp extends HTMLElement {
       </style>
     `;
   }
+
+  reRenderAppSection(){
+    this.shadowObj.querySelector('.app-section').innerHTML = this.getSection(this.showSection)
+  }
+
+  handleURL(){
+    switch(window.location.hash){
+      case '#search':
+        this.showSection = 1;
+        break;
+      case '#trending':
+        this.showSection = 2;
+        break;
+      case '#random':
+        this.showSection = 3;
+        break;
+      default:
+        this.showSection = 1;
+        break;
+    }
+    this.render();
+  }
+
+
 }
